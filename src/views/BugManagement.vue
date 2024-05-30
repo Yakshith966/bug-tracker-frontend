@@ -58,6 +58,35 @@
       </v-card>
     </v-dialog>
 
+
+    <v-dialog v-model="bugDetailsDialog" max-width="800px">
+      <v-card>
+        <v-card-title>{{ bugDetails.title }}</v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12">
+              <p><strong>Description:</strong> {{ bugDetails.description }}</p>
+              <p><strong>Status:</strong> {{ bugDetails.status }}</p>
+              <p><strong>Assigned Developer:</strong> {{ bugDetails.assignedDeveloper }}</p>
+              <p><strong>Project:</strong> {{ bugDetails.project }}</p>
+            </v-col>
+            <v-col cols="12">
+              <v-row>
+                <v-col v-for="(image, index) in bugDetails.images" :key="index" cols="12" sm="6" md="4">
+                  <v-img :src="image" contain></v-img>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="bugDetailsDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
     <!-- Assign Developers Modal -->
     <v-dialog v-model="assignDevelopersDialog" max-width="500px">
       <v-card>
@@ -163,8 +192,11 @@
           <v-icon>mdi-account-plus</v-icon>
         </v-btn>
         <v-btn icon @click="openEditBugDialog(item)">
-          <v-icon>mdi-eye</v-icon>
+          <v-icon>mdi-pencil</v-icon>
         </v-btn>
+        <v-btn icon @click="viewBugDetails(item.id)">
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
         <v-btn icon @click="deleteBug(item.id)">
           <v-icon color="red">mdi-delete</v-icon>
         </v-btn>
@@ -208,6 +240,7 @@ export default {
     return {
       imageDialog: false,
       images: [],
+      bugDetailsDialog:false,
       selectedImageIndex: null,
       createBugDialog: false,
       assignDevelopersDialog: false,
@@ -225,6 +258,14 @@ export default {
         description: "",
         priority: "low", // Default value
         bug_images: [],
+      },
+      bugDetails: {
+        title: '',
+        description: '',
+        status: '',
+        assignedDeveloper: '',
+        project: '',
+        images: [],
       },
       selectedDevelopers: [],
       bugs: [],
@@ -252,13 +293,35 @@ export default {
   },
   created() {
     this.fetchBugs();
-    this.fetchProjects();
     this.fetchDevelopers();
+    this.fetchProjects();
   },
   methods: {
     viewImages(item) {
       this.images = item.bug_images.map(image => `http://127.0.0.1:8000/storage/${image}`);
       this.imageDialog = true;
+    },
+    viewBugDetails(bugId) {
+      axios.get(`http://127.0.0.1:8000/api/bugs/${bugId}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+      .then(response => {
+        const bug = response.data;
+        this.bugDetails = {
+          title: bug.name,
+          description: bug.description,
+          status: bug.status,
+          assignedDeveloper: bug.developers.map(dev => dev.name).join(', '),
+          project: bug.project.name,
+          images: bug.bug_images.map(image => `http://127.0.0.1:8000/storage/${image}`),
+        };
+        this.bugDetailsDialog = true;
+      })
+      .catch(error => {
+        console.error("Error fetching bug details:", error);
+      });
     },
     openImage(index) {
       this.selectedImageIndex = index;
@@ -345,6 +408,7 @@ export default {
         .then((response) => {
           this.bugs.push(response.data);
           this.createBugDialog = false;
+          this.fetchBugs();
           this.bugForm = {
             name: "",
             description: "",

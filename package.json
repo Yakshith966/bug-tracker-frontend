@@ -1,0 +1,31 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fancyapps/fancybox": "^3.5.7",
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.7.2",
+    "chart.js": "^4.4.3",
+    "fibers": "^5.0.3",
+    "moment": "^2.30.1",
+    "sass": "^1.77.2",
+    "sass-loader": "^10.5.2",
+    "vue": "^3.4.21",
+    "vue-chartjs": "^5.3.1",
+    "vue-router": "^4.3.2",
+    "vuetify": "^3.6.0-beta.0.0",
+    "vuex": "^4.1.0",
+    "vuex-store": "^1.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.0"
+  }
+}

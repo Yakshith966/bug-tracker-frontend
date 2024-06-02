@@ -61,9 +61,9 @@
             <v-list-item-action>
             <v-icon :color="notification.read_at ? 'grey' : 'blue'">mdi-bell-ring</v-icon>
           </v-list-item-action>
-            <v-list-item-title>
-              {{ notification.title }} has been changed the status to {{ notification.status }} on {{ notification.date }}
-            </v-list-item-title>
+          <v-list-item-title :style="{ color: 'black' }">
+            {{ notification.title }} has been changed the status to {{ notification.status }} on {{ notification.date }}
+          </v-list-item-title>
           </v-list-item-content>
           
         </v-list-item>
@@ -88,17 +88,12 @@ export default {
       selectedItem: 0,
       logoutDialog: false,
       notificationDialog: false,
-      items: [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/dashboard' },
-        { title: 'Projects', icon: 'mdi-cog', route: '/project-management' },
-        { title: 'Bug Management', icon: 'mdi-bug', route: '/bug-management' },
-        { title: 'Task List', icon: 'mdi-book', route: '/task-list' },
-        { title: 'Profile', icon: 'mdi-account', route: '/profile' },
-      ],
+      items: [], // Initialize empty items array
       notifications: [],
     };
   },
-  mounted(){
+  mounted() {
+    this.fetchUserRole();
     this.fetchNotifications();
   },
   computed: {
@@ -117,6 +112,8 @@ export default {
         }
       }).then(response => {
         sessionStorage.removeItem('token');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('role');
         this.$router.push('/login');
       }).catch(error => {
         console.error('Error logging out:', error);
@@ -142,8 +139,30 @@ export default {
           }
         });
     },
+    fetchUserRole() {
+      // Assuming the user's role is stored in sessionStorage
+      const userRole = sessionStorage.getItem('role');
+      this.setSidebarItems(userRole);
+    },
+    setSidebarItems(role) {
+      if (role === 'tester') {
+        this.items = [
+          { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/dashboard' },
+          { title: 'Projects', icon: 'mdi-cog', route: '/project-management' },
+          { title: 'Bug Management', icon: 'mdi-bug', route: '/bug-management' },
+          { title: 'Profile', icon: 'mdi-account', route: '/profile' },
+        ];
+      } else if (role === 'developer') {
+        this.items = [
+          { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/dashboard' },
+          { title: 'Bug Details', icon: 'mdi-bug', route: '/bug-details' },
+          { title: 'Profile', icon: 'mdi-account', route: '/profile' },
+        ];
+      }
+    },
   },
 };
+
 </script>
 
 <style scoped>

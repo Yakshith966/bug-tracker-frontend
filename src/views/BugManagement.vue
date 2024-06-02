@@ -1,5 +1,10 @@
 <template>
-  <v-container>
+   <div v-if="loading" class="text-center">
+      <v-progress-circular :model-value="value" :rotate="360" :size="100" :width="15" color="primary">
+        <template v-slot:default> {{ value }} % </template>
+      </v-progress-circular>
+    </div>
+  <v-container v-else>
     <!-- Create Bug Modal -->
     <v-dialog v-model="createBugDialog" max-width="500px">
       <v-card>
@@ -170,7 +175,7 @@
     <v-row>
   <v-col>
     <v-btn color="primary" @click="createBugDialog = true">Create Bug</v-btn>
-    <v-data-table :headers="headers" :items="bugs" item-key="id" class="elevation-1">
+    <v-data-table :headers="headers" :items="bugs" item-key="id" class="elevation-1"  :style="{ color: 'black' }">
       <template v-slot:item.slNo="{ index }">
         {{ index + 1 + (pagination.page - 1) * pagination.itemsPerPage }}
       </template>
@@ -238,6 +243,8 @@ import moment from "moment";
 export default {
   data() {
     return {
+      loading: false,
+      value: 0,
       imageDialog: false,
       images: [],
       bugDetailsDialog:false,
@@ -342,6 +349,18 @@ export default {
       document.body.removeChild(link);
     },
     fetchBugs() {
+      this.loading = true;
+      this.value = 0;
+
+      // Simulate progress
+      let progressInterval = setInterval(() => {
+        if (this.value < 90) {
+          this.value += 10;
+        } else {
+          clearInterval(progressInterval);
+        }
+      }, 100);
+
       axios
         .get("http://127.0.0.1:8000/api/bugs", {
           headers: {
@@ -349,7 +368,12 @@ export default {
           },
         })
         .then((response) => {
+          // this.bugs = response.data;
           this.bugs = response.data;
+          this.value = 100;
+          setTimeout(() => {
+            this.loading = false;
+          }, 500); // Small delay to show 100% completion
         })
         .catch((error) => {
           console.error("Error fetching bugs:", error);
@@ -585,5 +609,11 @@ export default {
   transform: translateY(-50%);
   pointer-events: none;
   color: rgba(0, 0, 0, 0.54);
+}
+.text-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Adjust as needed */
 }
 </style>

@@ -56,11 +56,16 @@ export default {
         this.successMessage = 'Login successful';
         const token = response.data.token;
         const userId=response.data.id;
+        const role=response.data.role;
+        console.log('role'+role);
+  
         // Store the token in session storage
         sessionStorage.setItem('token', token);
         sessionStorage.setItem('userId', userId);
+        sessionStorage.setItem('role', role);
         console.log('Token set in sessionStorage:', token);
         console.log('UserId set in sessionStorage:', userId);
+        console.log('Role set in sessionStorage:', role);
         // Optionally redirect to a different page
         this.$router.push('/dashboard');
       }).catch(error => {
@@ -71,3 +76,5 @@ export default {
   },
 };
 </script>
+
+

@@ -55,6 +55,7 @@ import Profile from '../components/profile/Profile.vue';
 import ProjectManagement from '../views/ProjectManagement.vue';
 import BugManagement from '../views/BugManagement.vue';
 import BugDetails from '../views/BugDetails.vue';
+import TaskManagement from '../components/Task/TaskManagement.vue';
 
 const commonRoutes = [
   { path: '/login', component: Login },
@@ -72,6 +73,7 @@ const developerRoutes = [
   { path: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },
   { path: 'bug-details', component: BugDetails, meta: { requiresAuth: true } },
   { path: 'profile', component: Profile, meta: { requiresAuth: true } },
+  { path: 'task-management', component: TaskManagement, meta: { requiresAuth: true } },
 ];
 
 const routes = [

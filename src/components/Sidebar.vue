@@ -157,6 +157,7 @@ export default {
           { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/dashboard' },
           { title: 'Bug Details', icon: 'mdi-bug', route: '/bug-details' },
           { title: 'Profile', icon: 'mdi-account', route: '/profile' },
+          { title: 'Task Management', icon: 'mdi-account', route: '/task-management' },
         ];
       }
     },

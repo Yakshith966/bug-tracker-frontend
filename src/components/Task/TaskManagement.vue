@@ -422,10 +422,11 @@
           formData.append("task_images[]", this.bugForm.task_images[i]);
         }
         axios
-          .post("http://127.0.0.1:8000/api/tasks", formData, {
+          .post("http://127.0.0.1:8000/api/store-task", formData, {
             headers: {
+               'Content-Type':'multipart/form-data',
               Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-              'Content-Type':'multipart/form-data'
+             
               
             },
           })
